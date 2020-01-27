@@ -8,6 +8,9 @@ output:
     theme: cosmo
 ---
 
+### Homework 1
+[Typora document](HW1.html)
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
