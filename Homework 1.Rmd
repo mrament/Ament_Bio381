@@ -1,0 +1,16 @@
+---
+title: "Ament Bio 381 Portfolio"
+author: "Mike Ament"
+date: "January 28, 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<img src="me.JPG" width="300" height ="300/>"
+
+### Homework Assignment 
+
+[Typora Homework](HW1.html)
