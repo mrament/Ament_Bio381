@@ -1,5 +1,5 @@
 ---
-title: "Test Web Page"
+title: "Web Page"
 author: "Mike Ament"
 date: "January 22, 2020"
 output: 
@@ -10,8 +10,13 @@ output:
 
 ![Selfie](https://mrament.github.io/Ament_Bio381/me.jpg)
 
-# Homework 1
-[Typora document](HW1.html)
+
+# Homework 1 - Nonexistant 
 
 # Homework 2
+[Typora document](HW1.html)
+
+# Homework 3
 [Regular Expressions](Homework-3.html)
+
+# Homework 4
