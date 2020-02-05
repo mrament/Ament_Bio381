@@ -8,6 +8,8 @@ output:
     theme: cosmo
 ---
 
+![Selfie](https://mrament.github.io/Ament_Bio381/me.jpg)
+
 ### Homework 1
 [Typora document](HW1.html)
 
