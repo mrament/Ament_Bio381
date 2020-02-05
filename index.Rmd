@@ -11,7 +11,7 @@ output:
 ![Selfie](https://mrament.github.io/Ament_Bio381/me.jpg)
 
 
-# Homework 1 - Nonexistant 
+# Homework 1 - Nonexistent 
 
 # Homework 2
 [Typora document](HW1.html)
