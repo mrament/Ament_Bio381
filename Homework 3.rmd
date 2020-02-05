@@ -1,0 +1,168 @@
+---
+title: "HW 3"
+author: "Mike Ament"
+date: "January 30, 2020"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Regex language 
+
+```
+Problem 1: 
+  - Turn this:
+
+First String    Second      1.22      3.4
+Second          More Text   1.555555  2.2220
+Third           x           3         124
+
+  -Into this: 
+  
+First String,Second,1.2,3.4
+Second,More Text,1.55555,2.2220
+Third,x,3,124
+
+FIND: \s{2,}  This identifies all the instances where there's more than 1 space in a row and replaces it with a comma. I'm not sure how to enter a line break every 4 items though
+
+REPLACE: ,
+
+```
+
+```
+Problem 2: 
+  - Turn this:
+  
+Ballif, Bryan, University of Vermont
+Ellison, Aaron, Harvard Forest
+Record, Sydne, Bryn Mawr
+
+  - Into this: 
+  
+Bryan Ballif (University of Vermont)
+Aaron Ellison (Harvard Forest)
+Sydne Record (Bryn Mawr)
+  
+FIND:  (.+),\s(.+),\s(.*)   The first term identifies everything before the comma, then finds the comma and the space, then identifies everything to the next comma, then identifies the comma and the space, then identifies the rest of the line. 
+
+REPLACE: \2 \1 \(\3\)   This calls the second captured term, adds a space, then calls the first captured term, adds a space then puts parentheses around the third captured term 
+
+```
+```
+Problem 3: 
+  - Turn this:
+  
+  0001 Georgia Horseshoe.mp3 0002 Billy In The Lowground.mp3 0003 Cherokee Shuffle.mp3 0004 Walking Cane.mp3
+  
+  - Into this: 
+  
+0001 Georgia Horseshoe.mp3
+0002 Billy In The Lowground.mp3
+0003 Cherokee Shuffle.mp3
+0004 Walking Cane.mp3
+
+FIND: .mp3  This finds .mp3
+
+REPLACE: .mp3\r  This adds a breakline 
+```
+
+``` 
+Problem 4: 
+  - Turn this:  
+
+0001 Georgia Horseshoe.mp3
+0002 Billy In The Lowground.mp3
+0003 Cherokee Shuffle.mp3
+0004 Walking Cane.mp3
+
+  - Into this: 
+  
+Georgia Horseshoe_0001.mp3
+Billy In The Lowground_0002.mp3
+Cherokee Shuffle_0003.mp3
+Walking Cane_0004.mp3
+
+FIND: (\d{4,})\s(.+)(.mp3)  This captures the first four digits, then captures the text and the subsequent .mp3 
+
+REPLACE: \2_\1\3   
+
+```
+```
+Problem 5: 
+  - Turn this: 
+  
+Camponotus,pennsylvanicus,10.2,44
+Camponotus,herculeanus,10.5,3
+Myrmica,punctiventris,12.2,4
+Lasius,neoniger,3.3,55
+  
+  - Into this: 
+
+C_pennsylvanicus,44
+C_herculeanus,3
+M_punctiventris,4
+L_neoniger,55
+
+
+FIND: (\w)\w+,(\w+),.+(,.*)  This captures the first letter of the first word, then finishes the word, identifies a comma, captures the next word, identifies the comma, then captures the rest of the line except for the comma and remainder of the line
+
+REPLACE: \1_\2\3  Self explanatory 
+
+```
+```
+Problem 6: 
+
+  - Turn this:
+  
+Camponotus,pennsylvanicus,10.2,44
+Camponotus,herculeanus,10.5,3
+Myrmica,punctiventris,12.2,4
+Lasius,neoniger,3.3,55
+
+  - Into this: 
+  
+C_penn,44
+C_herc,3
+M_punc,4
+L_neon,55  
+
+FIND:  (\w)\w+,(\w{4})\w+,.+(,)(.*)   the (\w{4}) term captures the first 4 letters of the second word term, the rest of the terms I've described previously 
+
+REPLACE:  \1_\2\3\4  self explanatory 
+
+```
+```
+Problem 7: 
+
+  - Turn this:
+  
+Camponotus,pennsylvanicus,10.2,44
+Camponotus,herculeanus,10.5,3
+Myrmica,punctiventris,12.2,4
+Lasius,neoniger,3.3,55
+
+  - Into this: 
+
+Campen, 44, 10.2
+Camher, 3, 10.5
+Myrpun, 4, 12.2
+Lasneo, 55, 3.3
+
+
+FIND: (\w{3})\w+,(\w{3})\w+,(.+),(.*)
+
+REPLACE:  \1\2, \4, \3
+
+```
+  
+  
+  
+  
+  
+  
+  
+  

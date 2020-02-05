@@ -28,7 +28,7 @@ Here is a link to [Google][http://google.com]
 
 Here's an image: 
 
-![Alt text](C:\Users\mra61643\Desktop\Ament_Bio381\frog.jpg)
+![Alt text](https://mrament.github.io/Ament_Bio381/frog.jpg)
 
 
 
@@ -81,7 +81,7 @@ Simple table
 
 Hand drawn diagram: 
 
-![Alt text](C:\Users\mra61643\Desktop\Ament_Bio381\diagram.jpg)
+![Alt text](https://mrament.github.io/Ament_Bio381/diagram.jpg)
 
 
 
