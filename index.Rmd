@@ -21,3 +21,10 @@ output:
 
 # Homework 4
 [Vectors in R](Homework-4.html)
+
+# Homework 5
+
+# Homework 6 
+[Probability Distributions and Simulation](Homework-6.html)
+
+
