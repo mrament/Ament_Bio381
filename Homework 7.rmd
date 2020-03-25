@@ -1,0 +1,128 @@
+---
+title: "HW7"
+author: "Mike Ament"
+date: "March 10, 2020"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+#Question 1
+Go back to your “thinking on paper” exercise, and decide on a pattern that you might expect in your experiment if a specific hypothesis were true.
+
+Experiment: Plant responses to elevated CO2. Treatment 1 is ambient CO2 conditions and Treatment 2 is elevated CO2 conditions. If my hypothesis is true, plants grown under elevated CO2 conditions will be larger 
+
+#Question 2
+
+To start simply, assume that the data in each of your treatment groups follow a normal distribution. Specify the sample sizes, means, and variances for each group that would be reasonable if your hypothesis were true.
+
+Sample size = 20 plants per treatment group. This sample size would be reasonable for a small greenhouse experiment. 
+Means = 50 and 60 grams for an ambient and an elevated treatment plants, respectively. This is an effect size of 20%, which is common for CO2 experiments conducted in growth chambers. 
+Standard Deviation (sqrt of variance) = 10 g for both treatments. Plant growth is highly variable, so this large standard deviation is a very conservative estimate.  
+
+# Question 3
+Using the methods we have covered in class, write code to create a random data set that has these attributes. Organize these data into a data frame or tibble with the appropriate structure.
+
+```{r}
+treats<- c("ambient", "elevated")  # treatment groups 
+n<- c(20, 20)   # sample sizes 
+mean<- c(50, 60)  ## effect size 20%
+sd<- c(10, 10) ## magnitude of SD same as that of effect size  
+plant_wt<- c(rnorm(n=n[1], mean=mean[1], sd=sd[1]), 
+         rnorm(n=n[2], mean=mean[2], sd=sd[2]))
+
+ID<- 1:length(plant_wt) # creates a vector 40 characters long
+treatment<- rep(treats, n)  
+
+data<- data.frame(ID, treatment, plant_wt)
+
+AOVmodel<- aov(plant_wt~treatment, data=data)
+summary(AOVmodel)
+
+```
+
+
+#Question 4
+Now write code to analyze the data (probably as an ANOVA or regression analysis, but possibly as a logistic regression or contingency table analysis. Write code to generate a useful graph of the data.
+
+```{r}
+AOVmodel<- aov(plant_wt~treatment, data=data)
+summary(AOVmodel)
+z<- summary(AOVmodel)
+unlist(z)
+AOVsummary<- list(f=unlist(z)[7], p=unlist(z)[9])
+
+library(ggplot2)
+AOVplot<- ggplot(data=data, aes(x=treatment, y=plant_wt, fill=treatment))+
+  geom_boxplot()
+print(AOVplot)
+
+
+```
+
+#Question 5
+Try running your analysis multiple times to get a feeling for how variable the results are with the same parameters, but different sets of random numbers.
+
+#Answer:
+Running my analysis multiple times  yields slightly different results each time, but 10/10 repetitions yielded statistically significant results (p<0.05)
+
+
+# Question 6
+Now begin adjusting the means of the different groups. Given the sample sizes you have chosen, how small can the differences between the groups be (the “effect size”) for you to still detect a significant pattern (p < 0.05)?
+
+```{r}
+
+treats<- c("ambient", "elevated")  # treatment groups 
+n<- c(20, 20)   # sample sizes 
+mean<- c(50, 57.5)  ## effect size, change this to see how results vary
+sd<- c(10, 10) ## SD same as effect size 
+plant_wt<- c(rnorm(n=n[1], mean=mean[1], sd=sd[1]), 
+         rnorm(n=n[2], mean=mean[2], sd=sd[2]))
+
+ID<- 1:length(plant_wt)
+treatment<- rep(treats, n)  
+
+data<- data.frame(ID, treatment, plant_wt)
+
+AOVmodel<- aov(plant_wt~treatment, data=data)
+summary(AOVmodel)
+
+
+
+```
+
+#Answer: 
+My orginal effect size was 20% (or 10 grams) and 10/10 simulations yielded a significant results (p<.05).  Changing my effect size to 10% (or 5 grams) though, yielded a significant p value only 2/10 times. I then increased the effect size to 15% (7.5g) and saw a significant p value 5/10 times. Therefore, an effect size of about 17% seems to be about the smallest I need to consistently detect a difference between the treatment groups (given a sample size of 20 and a standard deviation of 10g). 
+
+
+#Question 7
+Alternatively, for the effect sizes you originally hypothesized, what is the minimum sample size you would need in order to detect a statistically significant effect? Again, run the model a few times with the same parameter set to get a feeling for the effect of random variation in the data.
+
+```{r}
+
+treats<- c("ambient", "elevated")  # treatment groups 
+n<- c(10, 10)   # sample sizes 
+mean<- c(50, 60)  ## effect size 20%
+sd<- c(10, 10) ## SD same as effect size 
+plant_wt<- c(rnorm(n=n[1], mean=mean[1], sd=sd[1]), 
+         rnorm(n=n[2], mean=mean[2], sd=sd[2]))
+
+ID<- 1:length(plant_wt)
+treatment<- rep(treats, n)  
+
+data<- data.frame(ID, treatment, plant_wt)
+
+AOVmodel<- aov(plant_wt~treatment, data=data)
+summary(AOVmodel)
+
+```
+
+#Answer
+Dropping my sample size from 15 to 20 produced a 30% increase in the number of times I observed as statistically insignificant p value. Dropping it from 15 to 10 produced a 50% increase in the number of times in the number of statistically insignificant results. Since I'd like to detect a significant result 95% of the time (given that my means are in fact different), I think my sample size should be AT LEAST 20. This is due to the high variability I assumed for my sd parameter.  
+
+
+8) Write up your results in a markdown file, organized with headers and different code chunks to show your analysis. Be explicit in your explanation and justification for sample sizes, means, and variances.
+
+
+
+
+

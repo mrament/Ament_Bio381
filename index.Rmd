@@ -23,8 +23,19 @@ output:
 [Vectors in R](Homework-4.html)
 
 # Homework 5
+[Matrices, Lists and Dataframes](Homework-5.html)
 
 # Homework 6 
 [Probability Distributions and Simulation](Homework-6.html)
+
+# Homework 7
+[Fake Datasets to Explore Hypotheses](Homework-7.html) 
+
+# Homework 8
+[Data Manipulation with dplyr](Homework-8.html)
+
+
+
+
 
 
