@@ -1,0 +1,239 @@
+---
+title: "HW 10"
+author: "Mike Ament"
+date: "March 28, 2020"
+output: html_document
+---
+#Question 1
+Using a for loop, write a function to calculate the number of zeroes in a numeric vector. Before entering the loop, set up a counter variable counter <- 0. Inside the loop, add 1 to counter each time you have a zero in the matrix. Finally, use return(counter) for the output.
+
+```{r}
+# -------------------------------------
+# FUNCTION zeros
+# description: Finds number of 0's in a numeric vector 
+# inputs: A numeric vector containing 0's. 
+# outputs: The number of 0's contained in the vector 
+#######################################
+
+zeros<- function(x){
+for(i in 1:length(x)) { #loop through the numeric vector 
+  if(x[i]!=0) next      # if the value of x[i] doesn't equal 0, go to end of loop
+  counter= counter+1  # if it fails the if statment (i.e. does equal 0), add 1 to the counter
+}
+  return(counter)
+}
+```
+
+
+```{r}
+## Test function
+
+d<- rep(0:5,10)
+d<- sample(d) ### random vector n=50 containing numbers from 0 to 5. 
+counter<- 0  # counter variable 
+
+ 
+
+zeros(x=d)  # number of 0's in d = 10. 
+
+```
+
+Function worked!
+
+
+#Question 2
+Use subsetting instead of a loop to rewrite the function as a single line of code.
+
+
+3 subsetting options shown below 
+```{r}
+
+d0<- length(d[which(d==0)]) # Option 1 - extract all the indices of d where d[i] = 0. Then count up how many indices were extracted 
+print(d0)
+
+d0<- sum(d==0)             # Option 2 - create of vector of True/False elements. The sum will be the number of true, because it converts True/False to 1/0. 
+print(d0)
+
+d0<- sum(d %in% 0)         # Option 3 - Same as option 2, just slightly different. 
+print(d0)
+
+```
+
+
+#Question 3
+Write a function that takes as input two integers representing the number of rows and columns in a matrix. The output is a matrix of these dimensions in which each element is the product of the row number x the column number.
+
+
+```{r}
+
+# -------------------------------------
+# FUNCTION Matrx
+# description: makes a matrix and fills the matrix elements with their row value times their column value. 
+# inputs: integer values of x and y
+# outputs: a matrix as described above 
+#######################################
+
+matrx<- function(x,y) {
+ m<- matrix(nrow=x, ncol=y) # make a matrix that's x rows by y columns 
+  for(i in 1:x){            # loop through the rows 
+    for(j in 1:y){          # loop through the columns 
+      m[i,j]<- i*j          # for each value of i and j, multiply them and store them in the matrix m in their respective positions (i,j) 
+}
+  }
+ return(m)   # once the whole function has ran its course, return m 
+}
+
+matrx(x=5, y=7)  ## test function with values 5 and 7 
+
+```
+Function works! 
+
+
+
+#Question 4
+Use the code from the upcoming April 2nd lecture (Randomization Tests) to design and conduct a randomization test for some of your own data. You will need to modify the functions that read in the data, calculate the metric, and randomize the data. Once those are set up, the program should run correctly calling your new functions. Also, to make your analysis fully repeatable, make sure you set the random number seed at the beginning (use either set.seed() in base R, or char2seed in the TeachingDemos package. 
+
+```{r}
+# 1. get_data() function is not necessary because I'm bringing my own data in. I'm going to reorganize it a bit here though. 
+
+library(readxl)
+library(dplyr)
+library(ggplot2)
+set.seed(200)
+data<- read_excel("C:\\Users\\mra61643\\Desktop\\Raw Plant Biomass.xlsx")
+
+data1<- data %>% 
+  filter(Treatment %in% c("C", "P")) %>% 
+  select(c("Treatment", "Total Biomass")) %>% 
+  rename(trt=Treatment, tb="Total Biomass")
+
+
+```
+
+
+```{r}
+# 2. Calculate metric,  "Treatment Effect"
+
+# -------------------------------------
+# FUNCTION getMetric
+# description: Calculates the mean difference between the control and the treatment groups, also known as the treatment effect. 
+# inputs: A dataframe of treatment category and response variable
+# outputs: The value of the treatment effect 
+#######################################
+
+getMetric <- function(data) {  
+  Xobs<- data[,1]
+  Yobs<- data[,2]
+  z<- data.frame(Xobs, Yobs)
+  . <- lm(z[,2]~z[,1])
+  . <- summary(.)
+  . <- .$coefficients[2,1]  ## treatment effect 
+  trt_effect <- .
+  return(trt_effect)
+}
+
+```
+
+```{r}
+
+# 3. Randomize/reshuffle data
+# -------------------------------------
+# FUNCTION shuffleData
+# description: Randomly shuffles the response variable values 
+# inputs: A dataframe of the treatment category and the observed response variable
+# outputs: A data frame of the treatment category and randomly reshuffled response variable. 
+#######################################
+
+shuffleData <- function(data) {
+  Xobs<- data[,1]
+  Yobs<- data[,2]
+  z<- data.frame(Xobs, Yobs)
+  z[,2] <- sample(z[,2]) # use sample function with defaults to reshuffle column
+  return(z)
+}
+
+
+```
+
+
+
+```{r}
+# 4. Get P values 
+# -------------------------------------
+# FUNCTION: getPVal
+# description: Calculates the probability of observing results equal or more extreme than the data, assuming the null is true. 
+# inputs: The treatment effect size and a vector of simulated treatment effect sizes from the reshuffled data. 
+# outputs: Probability of finding a treatment effect greater (pU) or less (pL) than the observed metric. 
+#######################################
+
+
+# 4. Get P values
+getPVal <- function(Ob_met, Sim_mets) {
+      z <- list(Ob_met, Sim_mets)
+  pLower <- mean(z[[2]]<=z[[1]])
+  pUpper <- mean(z[[2]]>=z[[1]])
+  return(c(pL=pLower,pU=pUpper))
+}
+
+
+```
+
+
+```{r}
+
+# 5. Create histogram of simulated metrcis and show the observed metric 
+
+# FUNCTION: plotRanTest
+# description: Creates a histogram of all the simulated effect sizes from all the reshuffled observations and also depicts the observed effect size as a vertical bar. 
+# inputs: The observed metric and a vector of the simulated metrics. 
+# outputs: A plot as described above. 
+#######################################
+
+plotRanTest <- function(Ob_met, Sim_mets) {
+  dF <- data.frame(ID=1:length(Sim_mets),simx=Sim_mets)
+  p1 <- ggplot(data=dF,mapping=aes(x=simx)) + geom_histogram(mapping=aes(fill=I("goldenrod"),color=I("black"))) +
+    geom_vline(aes(xintercept=Ob_met,col="blue")) + xlab("Simulated Effect Size") + ylab("Frequency")
+  return(p1)
+}
+
+```
+
+
+```{r}
+# Putting it all together 
+
+
+nSim <- 1000 # number of simulations 
+Xsim <- rep(NA,nSim) # empty vector of simulated effect sizes 
+met<- getMetric(data=data1)
+
+for (i in seq_len(nSim)) {   # populates the Xsim vector 
+  Xsim[i] <- getMetric(data=shuffleData(data=data1))
+}
+
+p_val<- getPVal(Ob_met=met, Sim_mets=Xsim)
+print(p_val)
+
+plot<- plotRanTest(Ob_met=met, Sim_mets=Xsim)
+print(plot)
+
+```
+
+
+
+#Question 5
+For comparison, calculate in R the standard statistical analysis you would use with these data. How does the p-value compare for the standard test versus the p value you estimated from your randomization test? If the p values seem very different, run the program again with a different starting seed (and/or increase the number of replications in your randomization test). If there are persistent differences in the p value of the standard test versus your randomization, what do you think is responsible for this difference?
+
+```{r}
+# Use aov to calcualte the difference (I know that two treatments its better to use a t-test but the ANOVA produces similar results). 
+
+AOVres<- aov(tb~trt, data=data1)
+summary(AOVres)
+
+
+```
+
+# Answer: 
+The p-vale from the aov tests is virtually 0, which is what I calculated in the getPVal function from the randomization test. This means that the randomization test and standard ANOVA came to the same conclusion, which is that it's very unlikely that I the effect size I observed would be generated simply by chance. Thus, we rejet the null hypothesis that the two treatment groups have the same mean.  
+
+
