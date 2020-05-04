@@ -34,6 +34,17 @@ output:
 # Homework 8
 [Data Manipulation with dplyr](Homework-8.html)
 
+# Homework 9
+[Structured Programming](Homework-9.html) 
+
+# Homework 10
+[For loops, functions and randomization tests](Homework-10.html)
+
+# Homework 11
+[Batch Processing](Homework-11.html) 
+
+# Homework 12
+[Advanced ggplotting](Homework-12.html)
 
 
 
