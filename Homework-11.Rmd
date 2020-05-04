@@ -1,0 +1,89 @@
+---
+title: "Homework_11"
+author: "Mike Ament"
+date: "May 4, 2020"
+output:
+  html_document:
+    df_print: paged
+---
+
+# Prompt: 
+Repeat the exercise from the Batch Processing Lecture (7th April), but do it using real data sets rather than purely simulated. Check with folks in your lab to see if there are multiple data sets available for analysis. Stick to simple data analyses and graphics, but try to set it up as a batch process that will work on multiple files and save summary results to a common file.
+
+
+#Context: 
+I have water height data from an ISCO automatic water sampler and I've downloaded data from 8 ISCOs during 5 storms (40 datasets). I now want to use batch processing to loop through those data sets, convert water height to flow then and calculate the cumulative volume of water that passed through the bioretention cells (inflow and outflow) and store it in a dataframe. I also want to create a storm hydrograph for each event, but I have missing data and haven't been able to get this to work. My plan, however, was to create a hydrograph for each datafile and store each hydrograph as an object in a list. 
+
+
+```{r message=FALSE}
+library(dplyr)
+library(stringr)
+
+colnew<- c("date", "m3s", "m") # new column names of imported data
+
+fpath<- "C:/Users/mra61643/Desktop/Field Data/Flow" # file pathway
+folder_list<- dir(fpath)  ## returns vector of contents of the folder i've specified. We're going to use this list to go into folders  
+
+len<- length(folder_list)*8 # storm events times 8 bioretention cells
+vec_len<- rep(NA, len)
+df<- data.frame(date=vec_len, cell=vec_len, cumul_vol=vec_len) # dataframe to store my summarized data
+
+
+
+```
+
+For loop to perform batch process
+
+```{r message=FALSE}
+
+k=0  # counter variable for arranging data in dataframe 
+
+
+for(i in folder_list){
+  folder<- paste(fpath,i, sep="/")  # folder becomes the working directory pathway to enter the folder that contains 8 datasets for each storm event 
+  for(j in dir(folder)) { 
+    file_path<- paste(folder,j, sep="/") # file_path becomes the pathway to get to both the folder and the file we want to open, and we use it within a read_csv statement 
+    x<- readr::read_csv(file_path,
+                        skip = 7, col_names=FALSE) ## This opens up the file I'm interested, omits the first 7 rows (which are metadata) and omits the column names and saves it as the object x. 
+    x<- x[,1:3] # select only the first 3 columns 
+    colnames(x)<- colnew ## rename all the columns using the vector created outside the loop
+    x<- x%>%   ## convert water height to flow using the equations below, and add these new variables to my dataframe
+      mutate(`L/s`= 1380*(m)^2.5)%>%
+      mutate(`L/m`=`L/s`*60)
+
+    cumul_vol<- sum(na.omit(x$`L/m`)) # take the sum of the L/m column to get the cumulative volume. 
+  
+    k=k+1  # add 1 to k, my counter 
+    df$cumul_vol[k]<- cumul_vol ## assign the cumulative volume metric to a cell in my created dataframe 
+    df$date[k]<- i   ## Extract the date, kinda 
+    df$cell[k]<- j   ## extract the cell number, kinda
+  }
+    
+}
+
+df
+
+```
+
+
+```{r message=FALSE}
+df$date<- df$date %>%                 ### make some corrections to my poorly named file by converting all the dashes to underscores 
+  stringr::str_replace("-", "_")%>%
+  stringr::str_extract("\\w+")  ## highlight the first full word,  extract it, and replace it in the dataframe 
+
+df$cell<- df$cell %>%               # make corrections to my poorly named files to get the cell numbers. 
+  stringr::str_replace("-", "_")%>%
+  stringr::str_replace("I", "i")%>%
+  stringr::str_replace("c", "C")%>%
+  stringr::str_replace("O", "o")%>%
+  stringr::str_extract("\\w\\w\\w\\w\\w")%>%
+  stringr::str_replace("ou", "out")
+
+df
+
+```
+
+
+
+
+
